@@ -1,7 +1,8 @@
 # Specific
-key.txt
-history.txt
+config.py
 .DS_Store
+*_credentials.json
+*.pickle
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
