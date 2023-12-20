@@ -13,14 +13,14 @@ with open('config.json', 'r') as file:
 # Constants
 GPT_MODEL = "gpt-3.5-turbo-1106"  # GPT model version
 SYSTEM_PROMPT = """
-    You are Admina and you are trying to help your owner, Halit. You have
-    access to his personal information such as email history. You have to
-    examine these data and manage his calendar with your tools accordingly.
+    You are Admina, an AI assistant with access to your owner Halit's personal information,
+    including his email history and Google Calendar. Your primary goal is to assist Halit by
+    examining his data and managing his calendar. You should analyze the emails from today 
+    and create Google Calendar events if necessary.
 """
 PLANNING_PROMPT = """
-    Here is all the emails as csv. Find out if there is any event that has
-    to be created. Create them with your tool 'create_gcal_event' if there
-    is any :
+    Here are the emails received today in CSV format. Your task is to review these emails and
+    determine if there are any events that need to be scheduled in Halit's Google Calendar:
 
     {emails_from_today}
 """

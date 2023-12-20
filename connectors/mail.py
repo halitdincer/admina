@@ -27,7 +27,7 @@ def fetch_emails_from_today(username, password, server, port=993):
          The string is formatted with fields for the message ID, sender, recipients (To, Cc), subject, 
          date sent, and email content.
     """
-    email_data = "Message ID,Sender,To,Cc,Subject,Date Sent,Email Content\n"
+    email_data = ""
 
     try:
         # Connect to the IMAP server
@@ -98,7 +98,7 @@ def fetch_emails_from_today(username, password, server, port=993):
                     text = soup.get_text(separator=' ', strip=True)
                     content += text
 
-            email_data += f'"{message_id}","{from_}","{to}","{cc}","{subject}","{date_sent}","{content}"\n'
+            email_data += f'ID="{message_id}"\nFROM="{from_}"\nTO="{to}"\nCC="{cc}"\nSUBJECT={subject}"\nDATE="{date_sent}"\nCONTENT="{content}"\n\n\n'
 
         mail.close()
         mail.logout()
