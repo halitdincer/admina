@@ -75,6 +75,6 @@ def fetch_emails_from_today(username, password, server, port=993):
 with open('../config.json', 'r') as file:
     config = json.load(file)
 
-    result = fetch_emails_from_today(config["MAIL_ADDRESS"], config["MAIL_PASSWORD"], config["MAIL_SERVER"], file_path='emails_today.txt')
+    result = fetch_emails_from_today(config["MAIL_ADDRESS"], config["MAIL_PASSWORD"], config["MAIL_SERVER"])
     print(result)
 
