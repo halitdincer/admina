@@ -2,30 +2,33 @@ import os
 import json
 from openai import OpenAI
 from connectors.gcal import *  # Import Google Calendar connector functions
-from config import OPENAI_KEY  # Import OpenAI API key
+from connectors.mail import fetch_emails_from_today
+
+emails_from_today = fetch_emails_from_today
+
+# Load the JSON data from the file
+with open('config.json', 'r') as file:
+    config = json.load(file)
 
 # Constants
 GPT_MODEL = "gpt-3.5-turbo-1106"  # GPT model version
 SYSTEM_PROMPT = """
-    You are Admina and you are trying to help your owner, Halit. 
-    You will manage his calendar with your tools based on the information
-    that you receive such as message chains.
+    You are Admina and you are trying to help your owner, Halit. You have
+    access to his personal information such as email history. You have to
+    examine these data and manage his calendar with your tools accordingly.
 """
 PLANNING_PROMPT = """
-    Here is the message chain:
+    Here is all the emails as csv. Find out if there is any event that has
+    to be created. Create them with your tool 'create_gcal_event' if there
+    is any :
 
-    2023 Dec 18:
-    Bob: Hi, do you remember our lunch tomorrow at 1pm?
-    Halit: Yes, I do remember.
-    Bob: Can we move to 2pm?
-    Halit: Yeah, sure.
-    Bob: Great.
+    {emails_from_today}
 """
 
 # Message chain for the OpenAI chat completion
 messages = [
     {"role": "system", "content": SYSTEM_PROMPT},
-    {"role": "system", "content": PLANNING_PROMPT}
+    {"role": "user", "content": PLANNING_PROMPT}
 ]
 
 # Tool definition for calendar event creation
@@ -66,11 +69,12 @@ tools = [
 ]
 
 # Initialize OpenAI client with the API key
-client = OpenAI(api_key=OPENAI_KEY)
+client = OpenAI(api_key=config['OPENAI_KEY'])
 
 # Create a chat completion with OpenAI
 response = client.chat.completions.create(
     model=GPT_MODEL,
+    temperature= 0.2,
     messages=messages,
     tools=tools,
     tool_choice="auto"  # auto is default, but we'll be explicit
