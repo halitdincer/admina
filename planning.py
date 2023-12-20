@@ -5,7 +5,7 @@ from connectors.gcal import *  # Import Google Calendar connector functions
 from config import OPENAI_KEY  # Import OpenAI API key
 
 # Constants
-GPT_MODEL = "gpt-3.5-turbo"  # GPT model version
+GPT_MODEL = "gpt-3.5-turbo-1106"  # GPT model version
 SYSTEM_PROMPT = """
     You are Admina and you are trying to help your owner, Halit. 
     You will manage his calendar with your tools based on the information
