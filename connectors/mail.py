@@ -113,5 +113,5 @@ with open('config.json', 'r') as file:
     config = json.load(file)
 
     result = fetch_emails_from_today(config["MAIL_ADDRESS"], config["MAIL_PASSWORD"], config["MAIL_SERVER"])
-    print(result)
+    #print(result)
 

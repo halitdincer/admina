@@ -4,26 +4,22 @@ from openai import OpenAI
 from connectors.gcal import *  # Import Google Calendar connector functions
 from connectors.mail import fetch_emails_from_today
 
-emails_from_today = fetch_emails_from_today
 
 # Load the JSON data from the file
 with open('config.json', 'r') as file:
     config = json.load(file)
 
-# Constants
-GPT_MODEL = "gpt-3.5-turbo-1106"  # GPT model version
-SYSTEM_PROMPT = """
-    You are Admina, an AI assistant with access to your owner Halit's personal information,
-    including his email history and Google Calendar. Your primary goal is to assist Halit by
-    examining his data and managing his calendar. You should analyze the emails from today 
-    and create Google Calendar events if necessary.
-"""
-PLANNING_PROMPT = """
-    Here are the emails received today in CSV format. Your task is to review these emails and
-    determine if there are any events that need to be scheduled in Halit's Google Calendar:
+emails_from_today = fetch_emails_from_today(config["MAIL_ADDRESS"], config["MAIL_PASSWORD"], config["MAIL_SERVER"])
 
-    {emails_from_today}
-"""
+# Constants
+GPT_MODEL = "gpt-3.5-turbo"  # GPT model version
+SYSTEM_PROMPT = """
+    As an AI assistant, your task is to analyze the provided emails and identify potential calendar events. Look for key details such as dates, times, and descriptions of meetings or appointments. When you identify an event, use the 'create_gcal_event' function to schedule it in Google Calendar. Avoid making assumptions or guesses about the content; focus only on the information clearly presented in the emails.
+    """
+PLANNING_PROMPT = """
+    List of emails:
+    {}
+""".format(emails_from_today)
 
 # Message chain for the OpenAI chat completion
 messages = [
@@ -68,13 +64,14 @@ tools = [
     }
 ]
 
+print(f'USER > {PLANNING_PROMPT}')
+
 # Initialize OpenAI client with the API key
 client = OpenAI(api_key=config['OPENAI_KEY'])
 
 # Create a chat completion with OpenAI
 response = client.chat.completions.create(
     model=GPT_MODEL,
-    temperature= 0.2,
     messages=messages,
     tools=tools,
     tool_choice="auto"  # auto is default, but we'll be explicit
@@ -82,6 +79,8 @@ response = client.chat.completions.create(
 
 # Extract and print the response message content
 response_message = response.choices[0].message
+
+print(f'Admina > {response_message.content}')
 
 # Process tool calls in the response message
 tool_calls = response_message.tool_calls
@@ -115,3 +114,5 @@ if tool_calls:
         messages=messages
     ) 
     print(second_response.choices[0].message.content)
+else:
+    print("LOG > There wasn't any tool calls.")
