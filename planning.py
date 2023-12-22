@@ -14,7 +14,12 @@ emails_from_today = fetch_emails_from_today(config["MAIL_ADDRESS"], config["MAIL
 # Constants
 GPT_MODEL = "gpt-3.5-turbo"  # GPT model version
 SYSTEM_PROMPT = """
-    As an AI assistant, your task is to analyze the provided emails and identify potential calendar events. Look for key details such as dates, times, and descriptions of meetings or appointments. When you identify an event, use the 'create_gcal_event' function to schedule it in Google Calendar. Avoid making assumptions or guesses about the content; focus only on the information clearly presented in the emails.
+    As an AI assistant, your task is to analyze the provided emails and identify potential 
+    calendar events. Look for key details such as dates, times, and descriptions of meetings
+    or appointments. When you identify an event, use the 'create_gcal_event' function in your 
+    tool call functions to  schedule it in Google Calendar immediately without asking a confirmation
+    from the user. Avoid making assumptions or guesses about the content; focus only on the 
+    information clearly presented in the emails.
     """
 PLANNING_PROMPT = """
     List of emails:
