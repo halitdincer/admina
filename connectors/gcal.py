@@ -73,7 +73,7 @@ def create_gcal_event(args):
 
     # Insert the event into the calendar
     event = service.events().insert(calendarId=CALENDAR_ID, body=event).execute()
-    return f'Event created: {event.get("htmlLink")}'
+    return "{'success':'true'}"
 
 # TODO: Function to update an event
 #def update_gcal_event(event_id, updated_event):

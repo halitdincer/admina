@@ -2,30 +2,37 @@ import os
 import json
 from openai import OpenAI
 from connectors.gcal import *  # Import Google Calendar connector functions
-from config import OPENAI_KEY  # Import OpenAI API key
+from connectors.mail import fetch_emails_from_today
+
+
+# Load the JSON data from the file
+with open('config.json', 'r') as file:
+    config = json.load(file)
+
+emails_from_today = fetch_emails_from_today(config["MAIL_ADDRESS"], config["MAIL_PASSWORD"], config["MAIL_SERVER"])
 
 # Constants
-GPT_MODEL = "gpt-3.5-turbo-1106"  # GPT model version
+GPT_MODEL = "gpt-3.5-turbo"  # GPT model version
 SYSTEM_PROMPT = """
-    You are Admina and you are trying to help your owner, Halit. 
-    You will manage his calendar with your tools based on the information
-    that you receive such as message chains.
-"""
-PLANNING_PROMPT = """
-    Here is the message chain:
+    As an AI assistant, you will utilize 'create_gcal_event' function in your tool call to create 
+    events in user's calendar for events and appointments that you found in emails that user sent it
+    to you. Your task is to analyze the provided emails and identify potential calendar events. When
+    you identify an event, use the 'create_gcal_event' function in your tool call functions to schedule
+    it in Google Calendar with 'create_gcal_event' function immediately without asking a confirmation from the user. Avoid making assumptions
+    or guesses about the content; focus only on the information clearly presented in the emails.
 
-    2023 Dec 18:
-    Bob: Hi, do you remember our lunch tomorrow at 1pm?
-    Halit: Yes, I do remember.
-    Bob: Can we move to 2pm?
-    Halit: Yeah, sure.
-    Bob: Great.
-"""
+    Note: Do not send any reply to user in all prompts. Just use tools whenever there is at least one potential event in the mail chains.
+    """
+PLANNING_PROMPT = """
+    Mail chain:
+    {}
+    Note: Do not send any reply to the user after this prompt. Just use tools whenever there is at least one potential event in the mail chain.
+""".format(emails_from_today)
 
 # Message chain for the OpenAI chat completion
 messages = [
     {"role": "system", "content": SYSTEM_PROMPT},
-    {"role": "system", "content": PLANNING_PROMPT}
+    {"role": "user", "content": PLANNING_PROMPT}
 ]
 
 # Tool definition for calendar event creation
@@ -65,8 +72,10 @@ tools = [
     }
 ]
 
+print(f'USER > {PLANNING_PROMPT}')
+
 # Initialize OpenAI client with the API key
-client = OpenAI(api_key=OPENAI_KEY)
+client = OpenAI(api_key=config['OPENAI_KEY'])
 
 # Create a chat completion with OpenAI
 response = client.chat.completions.create(
@@ -78,6 +87,8 @@ response = client.chat.completions.create(
 
 # Extract and print the response message content
 response_message = response.choices[0].message
+
+print(f'Admina > {response_message.tool_calls}')
 
 # Process tool calls in the response message
 tool_calls = response_message.tool_calls
@@ -111,3 +122,5 @@ if tool_calls:
         messages=messages
     ) 
     print(second_response.choices[0].message.content)
+else:
+    print("LOG > There wasn't any tool calls.")
