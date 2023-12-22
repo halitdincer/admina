@@ -88,7 +88,7 @@ response = client.chat.completions.create(
 # Extract and print the response message content
 response_message = response.choices[0].message
 
-print(f'Admina > {response_message.content}')
+print(f'Admina > {response_message.tool_calls}')
 
 # Process tool calls in the response message
 tool_calls = response_message.tool_calls

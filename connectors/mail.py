@@ -98,7 +98,7 @@ def fetch_emails_from_today(username, password, server, port=993):
                     text = soup.get_text(separator=' ', strip=True)
                     content += text
 
-            email_data += f'ID="{message_id}"\nFROM="{from_}"\nTO="{to}"\nCC="{cc}"\nSUBJECT={subject}"\nDATE="{date_sent}"\nCONTENT="{content}"\n\n\n'
+            email_data += f'ID="{message_id}"\nFROM="{from_}"\nTO="{to}"\nCC="{cc}"\nSUBJECT="{subject}"\nDATE="{date_sent}"\nCONTENT="{content}"\n\n\n'
 
         mail.close()
         mail.logout()
