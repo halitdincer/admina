@@ -74,13 +74,3 @@ def create_gcal_event(args):
     # Insert the event into the calendar
     event = service.events().insert(calendarId=CALENDAR_ID, body=event).execute()
     return "{'success':'true'}"
-
-# TODO: Function to update an event
-#def update_gcal_event(event_id, updated_event):
-#    service = authenticate_gcal()
-#    service.events().update(calendarId='primary', eventId=event_id, body=updated_event).execute()
-
-# TODO: Function to delete an event
-#def delete_gcal_event(event_id):
-#    service = authenticate_gcal()
-#    service.events().delete(calendarId='primary', eventId=event_id).execute()

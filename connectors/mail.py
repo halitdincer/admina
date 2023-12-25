@@ -3,7 +3,6 @@ import email
 import json
 from datetime import datetime
 from bs4 import BeautifulSoup  # Import Beautiful Soup
-from collections import defaultdict
 
 def fetch_emails_from_today(username, password, server, port=993):
     """
@@ -106,12 +105,3 @@ def fetch_emails_from_today(username, password, server, port=993):
 
     except Exception as e:
         return str(e)
-
-
-# Load the JSON data from the file
-with open('config.json', 'r') as file:
-    config = json.load(file)
-
-    result = fetch_emails_from_today(config["MAIL_ADDRESS"], config["MAIL_PASSWORD"], config["MAIL_SERVER"])
-    #print(result)
-
